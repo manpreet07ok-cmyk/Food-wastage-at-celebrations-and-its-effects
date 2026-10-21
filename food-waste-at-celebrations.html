@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Food Wastage at Celebrations</title>
+<style>
+  :root {
+    --cream: #faf6ef;
+    --paper: #ffffff;
+    --ink: #2b2622;
+    --muted: #6b625a;
+    --terra: #b5532c;
+    --green: #2f5d46;
+    --sand: #e9dcc7;
+    --line: #e4dccf;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.6;
+  }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; line-height: 1.2; margin: 0 0 .5em; }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+  h2 { font-size: clamp(1.7rem, 3.5vw, 2.4rem); }
+  h3 { font-size: 1.25rem; }
+  p { margin: 0 0 1em; }
+  a { color: var(--green); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+  section { padding: 72px 0; }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: .12em; font-size: .78rem;
+    color: var(--terra); font-weight: 600; margin-bottom: .6rem;
+  }
+  .lead { font-size: 1.15rem; color: var(--muted); max-width: 680px; }
+
+  /* nav */
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(250,246,239,.94); backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap { display: flex; gap: 18px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding-top: 12px; padding-bottom: 12px; }
+  nav .brand { font-family: Georgia, serif; font-weight: 700; color: var(--ink); text-decoration: none; }
+  nav ul { list-style: none; display: flex; gap: 16px; margin: 0; padding: 0; flex-wrap: wrap; }
+  nav a { text-decoration: none; color: var(--muted); font-size: .92rem; }
+  nav a:hover { color: var(--terra); }
+
+  /* hero */
+  .hero { padding: 88px 0 64px; background: linear-gradient(180deg, #f3e7d3 0%, var(--cream) 100%); }
+  .hero .stat-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 32px; }
+  .pill {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 999px;
+    padding: 10px 18px; font-size: .92rem;
+  }
+  .pill strong { color: var(--terra); }
+
+  /* cards */
+  .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); margin-top: 32px; }
+  .card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 24px;
+  }
+  .card .num { font-family: Georgia, serif; font-size: 2.4rem; color: var(--terra); line-height: 1; margin-bottom: 8px; }
+  .card p { color: var(--muted); font-size: .97rem; margin: 0; }
+
+  /* split layout */
+  .split { display: grid; gap: 40px; grid-template-columns: 1fr 1fr; align-items: center; }
+  @media (max-width: 760px) { .split { grid-template-columns: 1fr; } section { padding: 56px 0; } nav ul { gap: 10px; } }
+
+  .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 28px; }
+  .panel h3 { margin-bottom: 14px; }
+  .caption { font-size: .85rem; color: var(--muted); margin-top: 12px; }
+
+  /* bar charts */
+  .bars { display: flex; align-items: flex-end; gap: 10px; height: 220px; border-bottom: 2px solid var(--line); padding-top: 10px; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+  .bar { width: 100%; background: var(--terra); border-radius: 6px 6px 0 0; position: relative; }
+  .bar.alt { background: var(--green); }
+  .bar-val { font-size: .8rem; color: var(--ink); margin-bottom: 4px; font-weight: 600; }
+  .bar-label { font-size: .78rem; color: var(--muted); margin-top: 6px; text-align: center; line-height: 1.2; }
+  .flag { font-size: .72rem; color: var(--terra); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+
+  /* stacked bar */
+  .stack-row { margin-bottom: 14px; }
+  .stack-row .name { font-size: .9rem; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .stack { display: flex; height: 26px; border-radius: 6px; overflow: hidden; }
+  .stack span { display: block; height: 100%; color: #fff; font-size: .75rem; display: flex; align-items: center; justify-content: center; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: .82rem; color: var(--muted); margin-top: 10px; }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+  /* donut */
+  .donut-wrap { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  .donut-text { font-family: Georgia, serif; font-size: 1.05rem; max-width: 280px; }
+
+  /* checklist */
+  .tips { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 28px; }
+  .tip { background: var(--paper); border-left: 4px solid var(--green); border-radius: 10px; padding: 18px 20px; }
+  .tip h3 { font-size: 1.05rem; color: var(--green); }
+  .tip p { margin: 0; color: var(--muted); font-size: .96rem; }
+
+  /* quote-ish callout */
+  .callout {
+    background: var(--green); color: #f4efe6; border-radius: 16px; padding: 38px 32px;
+  }
+  .callout h2 { color: #fff; }
+  .callout p { color: #e2ebe4; max-width: 720px; }
+
+  .about ul { padding-left: 1.2em; color: var(--muted); }
+  .about li { margin-bottom: .5em; }
+
+  footer { padding: 36px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top">Food Wastage at Celebrations</a>
+    <ul>
+      <li><a href="#big-picture">The big picture</a></li>
+      <li><a href="#where">Where it happens</a></li>
+      <li><a href="#businesses">Caterers &amp; restaurants</a></li>
+      <li><a href="#home">At home</a></li>
+      <li><a href="#do">What you can do</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="eyebrow">Weddings · Festivals · Family feasts</div>
+    <h1>We cook for abundance.<br>Much of it ends up in the bin.</h1>
+    <p class="lead">Celebrations are about generosity, and generosity often means more food than anyone can eat. This page looks at how much food is lost at celebrations, why it happens, and what hosts, caterers and guests can do about it.</p>
+    <div class="stat-row">
+      <div class="pill">Over <strong>1 billion tonnes</strong> of food lost or wasted each year</div>
+      <div class="pill"><strong>24%</strong> of the world's calories go uneaten</div>
+      <div class="pill"><strong>8–10%</strong> of global greenhouse gas emissions</div>
+    </div>
+  </div>
+</header>
+
+<section id="big-picture">
+  <div class="wrap">
+    <div class="eyebrow">The big picture</div>
+    <h2>Food waste is a global problem with local roots</h2>
+    <p class="lead">Every plate left half-finished at a wedding is a small part of a much larger system. The figures below are the global numbers shown in the source video.</p>
+
+    <div class="split" style="margin-top: 36px;">
+      <div class="panel">
+        <h3>Share of calories lost or wasted</h3>
+        <div class="donut-wrap">
+          <svg width="200" height="200" viewBox="0 0 200 200" role="img" aria-label="24 percent of calories lost or wasted">
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#2f5d46" stroke-width="30"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#b5532c" stroke-width="30"
+              stroke-dasharray="120.6 502.6" transform="rotate(-90 100 100)"/>
+            <text x="100" y="110" text-anchor="middle" font-family="Georgia, serif" font-size="34" fill="#2b2622">24%</text>
+          </svg>
+          <div class="donut-text">of the world's calories go uneaten due to food loss and waste.</div>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:0;">
+        <div class="card"><div class="num">¼</div><p>of fresh water used in agriculture is spent on food that is wasted.</p></div>
+        <div class="card"><div class="num">¼</div><p>of all fertiliser used in agriculture goes into food that is wasted.</p></div>
+        <div class="card"><div class="num">China</div><p>Food loss and waste uses an amount of land greater than the area of China.</p></div>
+        <div class="card"><div class="num">8–10%</div><p>of global greenhouse gas emissions come from food that is lost or wasted.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="where" style="background: var(--paper);">
+  <div class="wrap">
+    <div class="eyebrow">Where it happens</div>
+    <h2>Celebration food waste follows the plate, not the menu</h2>
+    <p class="lead">Research from Lovely Professional University in Punjab, India, measured edible waste from takeaway and household meals. The charts show a clear pattern: the more people eating together, the more things can go wrong, and the bigger the mismatch between what is ordered and what is eaten.</p>
+
+    <div class="split" style="margin-top: 36px;">
+      <div class="panel">
+        <h3>Takeaway: edible waste per meal</h3>
+        <p style="color:var(--muted); font-size:.92rem;">By number of diners (approximate values read from the source chart, grams per person per meal).</p>
+        <div class="bars" role="img" aria-label="Bar chart of takeaway edible waste by number of diners">
+          <div class="bar-col"><div class="bar-val">~70</div><div class="bar" style="height:28%"></div><div class="bar-label">1</div></div>
+          <div class="bar-col"><div class="flag">Order errors</div><div class="bar-val">~250</div><div class="bar" style="height:90%"></div><div class="bar-label">2</div></div>
+          <div class="bar-col"><div class="bar-val">~65</div><div class="bar" style="height:24%"></div><div class="bar-label">3</div></div>
+          <div class="bar-col"><div class="bar-val">~50</div><div class="bar" style="height:20%"></div><div class="bar-label">4</div></div>
+          <div class="bar-col"><div class="bar-val">~60</div><div class="bar" style="height:23%"></div><div class="bar-label">5</div></div>
+          <div class="bar-col"><div class="bar-val">~80</div><div class="bar" style="height:30%"></div><div class="bar-label">6</div></div>
+          <div class="bar-col"><div class="bar-val">~45</div><div class="bar" style="height:17%"></div><div class="bar-label">7+</div></div>
+        </div>
+        <p class="caption">The two-person spike is linked in the source to order errors, where the wrong dish or quantity arrives and is left uneaten.</p>
+      </div>
+
+      <div>
+        <h3>What that means for celebrations</h3>
+        <p>Weddings and parties often order in bulk and in a hurry. A single mistake in quantity or a dish nobody wants can waste more than the rest of the meal combined.</p>
+        <p>Waste is also not just about leftovers. Ordering, portioning and serving decisions made days earlier matter just as much as what happens on the night.</p>
+        <p class="caption">Figures are approximate and read from the charts in the source video. Check the original study before citing exact values.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="businesses">
+  <div class="wrap">
+    <div class="eyebrow">Caterers &amp; restaurants</div>
+    <h2>Why professional kitchens waste food</h2>
+    <p class="lead">The same study asked hotels, caterers and restaurants why they waste food. The most common answer was a lack of awareness of how much money waste costs them. Time and tracking come next.</p>
+
+    <div class="panel" style="margin-top: 32px;">
+      <div class="stack-row">
+        <div class="name"><span>Hotels</span></div>
+        <div class="stack">
+          <span style="width:66%;background:#2f5d46;">Lack of awareness 66%</span>
+          <span style="width:17%;background:#b5532c;">Lack of time 17%</span>
+          <span style="width:17%;background:#c9b79c;color:#2b2622;">17%</span>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="name"><span>Caterers</span></div>
+        <div class="stack">
+          <span style="width:40%;background:#2f5d46;">40%</span>
+          <span style="width:20%;background:#7c8f6b;">20%</span>
+          <span style="width:40%;background:#b5532c;">Lack of time 40%</span>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="name"><span>Restaurants</span></div>
+        <div class="stack">
+          <span style="width:65%;background:#2f5d46;">Lack of awareness 65%</span>
+          <span style="width:26%;background:#c9b79c;color:#2b2622;">26%</span>
+          <span style="width:9%;background:#b5532c;">9%</span>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i style="background:#2f5d46"></i>Lack of awareness of cost-saving potential</span>
+        <span><i style="background:#b5532c"></i>Lack of time</span>
+        <span><i style="background:#7c8f6b"></i>Don't know how to track waste</span>
+        <span><i style="background:#c9b79c"></i>Food waste seen as negligible</span>
+      </div>
+      <p class="caption">Approximate percentages read from the source chart. Segments are not all labelled in the original, so treat them as indicative.</p>
+    </div>
+  </div>
+</section>
+
+<section id="home" style="background: var(--paper);">
+  <div class="wrap">
+    <div class="eyebrow">At home</div>
+    <h2>Family meals have their own patterns</h2>
+    <p class="lead">Home cooking for a family or a gathering creates waste through over-cooking, spoilage, and leftovers that never get eaten. The household chart from the study shows how meals are prepared at home.</p>
+
+    <div class="split" style="margin-top: 36px;">
+      <div class="panel">
+        <h3>How home meals are prepared</h3>
+        <div class="donut-wrap">
+          <svg width="180" height="180" viewBox="0 0 180 180" role="img" aria-label="Approximately two-thirds traditional cooking, the rest ready-to-cook and leftovers">
+            <circle cx="90" cy="90" r="70" fill="none" stroke="#c9b79c" stroke-width="36"/>
+            <circle cx="90" cy="90" r="70" fill="none" stroke="#2f5d46" stroke-width="36"
+              stroke-dasharray="293.2 439.8" transform="rotate(-90 90 90)"/>
+            <circle cx="90" cy="90" r="70" fill="none" stroke="#b5532c" stroke-width="36"
+              stroke-dasharray="70.4 662.6" stroke-dashoffset="-293.2" transform="rotate(-90 90 90)"/>
+          </svg>
+          <div style="font-size:.92rem; color:var(--muted);">
+            <div><span style="color:var(--green)">■</span> Traditional home cooking, roughly two-thirds</div>
+            <div><span style="color:var(--terra)">■</span> Ready-to-cook food</div>
+            <div><span style="color:#c9b79c">■</span> Eating leftovers from the last meal</div>
+          </div>
+        </div>
+        <p class="caption">Shares are approximate, read from the source chart.</p>
+      </div>
+      <div>
+        <h3>Cook for the people you have</h3>
+        <p>Household waste in the study was highest in some group sizes and was often linked to spoilage, when food sat too long before being eaten. Planning for who is actually coming, rather than who might come, makes the biggest difference.</p>
+        <p>Leftovers are not failures. A planned second meal, or a portion set aside on arrival, turns them into something useful.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="do">
+  <div class="wrap">
+    <div class="eyebrow">What you can do</div>
+    <h2>Practical steps for hosts, caterers and guests</h2>
+    <p class="lead">Small decisions before and during an event can cut waste sharply without making the celebration feel smaller.</p>
+
+    <div class="tips">
+      <div class="tip">
+        <h3>Confirm numbers early</h3>
+        <p>Use RSVPs and a final headcount a few days out. Share it with the caterer in writing, so orders match the people who will actually attend.</p>
+      </div>
+      <div class="tip">
+        <h3>Check every order</h3>
+        <p>Review the order against the menu before it's confirmed. Order errors were a major source of waste in the takeaway data.</p>
+      </div>
+      <div class="tip">
+        <h3>Serve in stages</h3>
+        <p>Keep most food in the kitchen and refill buffet trays as needed, instead of filling everything at once. Fewer, smaller trays reduce what gets thrown away.</p>
+      </div>
+      <div class="tip">
+        <h3>Plan leftovers in advance</h3>
+        <p>Arrange containers, labelled and chilled, before the event. Offer guests a take-home box, so food leaves with people who want it.</p>
+      </div>
+      <div class="tip">
+        <h3>Donate what's safe</h3>
+        <p>Contact local food rescue or community kitchen groups to see whether surplus cooked food can be collected. Check their rules first about what they can accept.</p>
+      </div>
+      <div class="tip">
+        <h3>Track the waste</h3>
+        <p>For caterers and restaurants, weighing what goes in the bin for a few events shows the real cost and helps justify changes to portions and orders.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="wrap">
+    <div class="callout">
+      <h2>Generosity doesn't have to mean excess.</h2>
+      <p>The aim is not to serve less. It is to serve well: enough for everyone, with a plan for what is left. Feeding people is at the heart of many celebrations, and so is making sure the food is eaten.</p>
+    </div>
+  </div>
+</section>
+
+<section class="about" style="padding-top:0;">
+  <div class="wrap">
+    <h3>About the figures</h3>
+    <ul>
+      <li>Global statistics (1 billion tonnes, 24% of calories, the water, fertiliser, land and emissions figures) are those displayed in the source video. Check the original source before citing them in formal work.</li>
+      <li>Takeaway, household and business charts come from the Lovely Professional University study shown in the video. Values were read from the chart images and are approximate.</li>
+      <li>Images from the source video were not reused here, so this page does not depend on licensed footage.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Food Wastage at Celebrations · Built from the source video and its on-screen data.</div>
+</footer>
+
+</body>
+</html>
